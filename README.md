@@ -8,6 +8,7 @@ Use `http://localhost:8080/` to access it locally, do not expose this to the web
   - [Ports](#ports)
   - [Mapped Volumes](#mapped-volumes)
   - [Environment Variables](#environment-variables)
+  - [Language Support](#language-support)
 - [Using Docker Compose](#using-docker-compose)
 - [Enabling GIT for the obsidian-git plugin](#enabling-git-for-the-obsidian-git-plugin)
   - [Docker CLI example](#docker-cli-example)
@@ -25,7 +26,8 @@ Use `http://localhost:8080/` to access it locally, do not expose this to the web
 
 ## Using the Container
 
-To run a interactive version to test it out. This is using windows based path, update for the OS you are running on.
+### Windows based path
+To run a interactive version to test it out:
 
 ```PowerShell
 docker run --rm -it `
@@ -35,7 +37,7 @@ docker run --rm -it `
   ghcr.io/sytone/obsidian-remote:latest
 ```
 
-To run it as a daemon in the background.
+To run it as a daemon in the background:
 
 ```PowerShell
 docker run -d `
@@ -52,6 +54,40 @@ docker run -d `
   -v D:/ob/vaults:/vaults `
   -v D:/ob/config:/config `
   -p 8080:8080 `
+  sytone/obsidian-remote:arm64
+```
+
+### Linux bash paths
+To run a interactive version to test it out:
+
+```bash
+mkdir -p ob/{vaults,config}
+docker run --rm -it \
+  -v ./ob/vaults:/vaults \
+  -v ./ob/config:/config \
+  -p 8080:8080 \
+  ghcr.io/sytone/obsidian-remote:latest
+```
+
+To run it as a daemon in the background:
+
+```bash
+mkdir -p ob/{vaults,config}
+docker run -d \
+  -v ./ob/vaults:/vaults \
+  -v ./ob/config:/config \
+  -p 8080:8080 \
+  ghcr.io/sytone/obsidian-remote:latest
+```
+
+The ARM container is now avaliable, will look to make this simpler in the future. The ARM imange is on the docker hub and not the github container registry. 
+
+```bash
+mkdir -p ob/{vaults,config}
+docker run -d \
+  -v ./ob/vaults:/vaults \
+  -v ./ob/config:/config \
+  -p 8080:8080 \
   sytone/obsidian-remote:latest
 ```
 
@@ -77,14 +113,23 @@ docker run -d `
 | PGID                 | Set the group ID for the continer user. `911` by default.                                                                                                                                                                           |
 | TZ                   | Set the Time Zone for the container, should match your TZ. `Etc/UTC` by default. See [List of tz database time zones](https://en.wikipedia.org/wiki/List_of_tz_database_time_zones) for valid options.                              |
 | DOCKER_MODS          | Use to add mods to the container like git. E.g. `DOCKER_MODS=linuxserver/mods:universal-git` See [Docker Mods](https://github.com/linuxserver/docker-mods) for details.                                                             |
+| INSTALL_PACKAGES     | Use to add package for the container like language pack. E.g. `INSTALL_PACKAGES=fonts-noto-cjk fonts-noto-extra` And the docker mod `linuxserver/mods:universal-package-install` is required.                                       |
 | KEYBOARD             | Used to se the keyboard being used for input. E.g. `KEYBOARD=en-us-qwerty` or `KEYBOARD=de-de-qwertz` a list of other possible values (not tested) can be found at <https://github.com/linuxserver/docker-digikam#keyboard-layouts> |
-| CUSTOM_PORT          | Internal port the container listens on for http if it needs to be swapped from the default 3000.                                                                                                                                    |
-| CUSTOM_HTTPS_PORT    | Internal port the container listens on for https if it needs to be swapped from the default 3001.                                                                                                                                   |
+| CUSTOM_PORT          | Internal port the container listens on for http if it needs to be swapped from the default 8080.                                                                                                                                    |
+| CUSTOM_HTTPS_PORT    | Internal port the container listens on for https if it needs to be swapped from the default 8443.                                                                                                                                   |
 | CUSTOM_USER          | HTTP Basic auth username, abc is default.                                                                                                                                                                                           |
 | PASSWORD             | HTTP Basic auth password, abc is default. If unset there will be no auth                                                                                                                                                            |
 | SUBFOLDER            | Subfolder for the application if running a subfolder reverse proxy, need both slashes IE `/subfolder/`                                                                                                                              |
 | TITLE                | The page title displayed on the web browser, default "KasmVNC Client".                                                                                                                                                              |
 | FM_HOME              | This is the home directory (landing) for the file manager, default "/config".                                                                                                                                                       |
+
+### Language Support
+
+To show the other languages, add the mod `linuxserver/mods:universal-package-install` and add the language pack. E.g. `INSTALL_PACKAGES=fonts-noto-cjk fonts-noto-extra` to support CJK (Chinese Japanese Korean).
+
+To type other language in the browser you should enable the **IME Input Mode** in the side panel.
+
+![Settings IME Input Mode](./assets/IMEInputMode.png)
 
 ## Using Docker Compose
 
